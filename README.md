@@ -2,7 +2,7 @@
 
 **A World of Learning Adventures**
 
-Latihan TIK interaktif untuk Informatika kelas 1. Prototype sekarang memakai **27 soal bertopik komputer/TIK** dari bank soal lama: 23 pilihan ganda dan 4 isian. Materi tampil dengan atribusi sumber dan masih menunggu validasi kualitas/izin.
+Latihan interaktif kelas 1. Pilihan materi: **TIK (27 soal)**, **Pendidikan Pancasila (11)**, **Bahasa Indonesia (13)**, **Matematika (8)**, dan **Seni Budaya/SBDP (10)**. Materi selain TIK diringkas dari soal STS/PTS lokal; soal yang hanya dapat dijawab dengan gambar yang tidak tersedia tidak dimasukkan.
 
 ## Jalankan
 
@@ -20,7 +20,7 @@ Buka `index.html` di browser modern. Tidak ada build atau package yang diperluka
 
 ## Sumber soal
 
-Subset data ada di `assets/data/tik-questions.js`, diambil dari [repo sumber lama](https://github.com/belvahector-ship-it/belajar-informatika-sd1/blob/main/index.html). Credit sumber ditampilkan di dialog “Tentang sumber soal”. Materi belum divalidasi sebagai kurikulum nasional Informatika kelas 1 dan status izin penggunaan masih perlu dikonfirmasi. PIXELAND tidak menyiratkan afiliasi/endorsement SD Al Huda Semarang.
+Data TIK ada di `assets/data/tik-questions.js`, dari [repo sumber lama](https://github.com/belvahector-ship-it/belajar-informatika-sd1/blob/main/index.html). Empat mapel lainnya ada di `assets/data/other-questions.js`, diringkas dari berkas dalam `Kumpulan_Soal_STS_PTS_Kelas_1_Semester_1`. Credit dan batasan materi ditampilkan di dialog “Tentang sumber soal”. Soal belum divalidasi sebagai kurikulum nasional dan status izin penggunaan tetap perlu dikonfirmasi. PIXELAND tidak menyiratkan afiliasi/endorsement sekolah mana pun.
 
 ## Aset visual
 

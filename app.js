@@ -1,8 +1,11 @@
 'use strict';
 
 const source = window.PIXELAND_TIK_SOURCE;
-const questions = source?.items || [];
-const views = ['home', 'quiz', 'result'];
+const tikQuestions = source?.items || [];
+const otherQuestionBanks = window.PIXELAND_OTHER_SOURCES || {};
+let questions = tikQuestions;
+let currentSubject = 'tik';
+const views = ['home', 'other', 'quiz', 'result'];
 const state = { index: 0, correct: 0, answers: [], soundOn: true, backgroundIndex: 0 };
 const byId = (id) => document.getElementById(id);
 const ui = {
@@ -10,6 +13,7 @@ const ui = {
   stars: byId('star-count'), topic: byId('topic-label'), question: byId('question-text'),
   answers: byId('answer-area'), next: byId('next-button'), feedback: byId('feedback-text'),
   buddy: byId('buddy-message'), dots: byId('question-dots'), speak: byId('speak-button'),
+  quizSubject: byId('quiz-subject-label'),
   resultScore: byId('result-score'), resultDetail: byId('result-detail'), resultMessage: byId('result-message')
 };
 const backgroundTracks = [
@@ -228,11 +232,18 @@ function finish() {
   go('result');
 }
 
-function startPractice() {
-  if (!questions.length) {
+function startPractice(subject = 'tik') {
+  const bank = subject === 'tik'
+    ? { title: 'TIK', items: tikQuestions }
+    : otherQuestionBanks[subject];
+  if (!bank?.items?.length) {
     ui.buddy.textContent = 'Bank soal belum dapat dibuka.';
     return;
   }
+  currentSubject = subject;
+  questions = bank.items;
+  ui.quizSubject.textContent = bank.title.replace('Pendidikan ', '').replace(' (SBDP)', '').toLocaleUpperCase('id-ID');
+  byId('view-quiz').classList.toggle('is-subject-other', subject !== 'tik');
   state.index = 0;
   state.correct = 0;
   state.answers = [];
@@ -270,7 +281,10 @@ document.addEventListener('click', (event) => {
     return;
   }
   const action = control.dataset.action;
-  if (action === 'start' || action === 'restart') startPractice();
+  if (action === 'start') startPractice('tik');
+  if (action === 'restart') startPractice(currentSubject);
+  if (action === 'open-other') go('other');
+  if (action === 'select-subject') startPractice(control.dataset.subject);
   if (action === 'exit') go('home');
   if (action === 'credits') byId('credits-dialog').showModal();
   if (action === 'close-credits') byId('credits-dialog').close();
