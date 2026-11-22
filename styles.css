@@ -23,3 +23,6 @@
 .lesson-sbdp{background:linear-gradient(145deg,#e5f8ee,#fff)}
 @media(max-width:900px){.lesson-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:650px){.lesson-selector{padding:16px 0}.lesson-heading h2{font-size:23px}.lesson-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.lesson-button{min-height:122px;border-radius:19px}.lesson-button strong{font-size:16px}.lesson-button>span{font-size:30px}.lesson-button:last-child{grid-column:1/-1;width:calc(50% - 5px);justify-self:center}}
+.site-footer{gap:16px;flex-wrap:wrap;min-height:54px;height:auto;padding-top:10px;padding-bottom:10px}
+.footer-credit{margin-left:auto}
+@media(max-width:650px){.site-footer{justify-content:center;gap:5px 14px;text-align:center}.footer-credit{flex-basis:100%;margin:0;font-size:8px}}
