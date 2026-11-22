@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eff8ff">
-  <meta name="description" content="PIXELAND — latihan TIK kelas 1 dengan petualangan visual.">
-  <title>PIXELAND — Latihan TIK Kelas 1</title>
+  <meta name="description" content="PIXELAND — petualangan belajar kelas 1 dengan lima mata pelajaran seru.">
+  <title>PIXELAND — Petualangan Belajar Kelas 1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -36,49 +36,26 @@
         <div class="hero-image" aria-hidden="true"></div>
         <div class="hero-shade" aria-hidden="true"></div>
         <div class="hero-copy">
-          <span class="pill"><span class="pill-star">✦</span> PETUALANGAN TIK KELAS 1</span>
-          <h1 id="home-title">Yuk, kenali<br><span>dunia komputer!</span></h1>
-          <p>27 soal seru. Bisa dengar soalnya juga!</p>
-          <div class="subject-entry-actions">
-            <button class="big-button start-button" type="button" data-action="start">
-              TIK <span aria-hidden="true">→</span>
-            </button>
-            <button class="secondary-button other-entry-button" type="button" data-action="open-other">
-              ✨ Lainnya
-            </button>
-          </div>
+          <span class="pill"><span class="pill-star">✦</span> PETUALANGAN SEKOLAH DASAR KELAS 1</span>
+          <h1 id="home-title">Yuk, bermain<br><span>sambil belajar!</span></h1>
+          <p>5 mata pelajaran seru dan asyik</p>
           <div class="hero-mini"><span class="mini-dot"></span> Santai saja, coba satu per satu.</div>
         </div>
         <img class="hero-buddy" src="assets/images/pixel-guide.png" alt="Robot PIXELAND melambaikan tangan" width="520" height="475">
         <div class="hero-sticker sticker-one" aria-hidden="true">⌨️</div>
         <div class="hero-sticker sticker-two" aria-hidden="true">🖱️</div>
       </div>
-      <div class="topic-strip" aria-label="Topik latihan">
-        <span class="topic-chip"><b>🖥️</b> Bagian komputer</span>
-        <span class="topic-chip"><b>⌨️</b> Keyboard</span>
-        <span class="topic-chip"><b>🖱️</b> Mouse</span>
-        <span class="topic-chip"><b>💚</b> Aman &amp; sehat</span>
-        <img src="assets/images/computer-friends.png" alt="Komputer, keyboard, mouse, dan speaker warna pastel" width="420" height="280">
-      </div>
-      <footer class="home-footer"><button type="button" class="text-button" data-action="credits">Tentang sumber soal</button><span>Explore. Discover. Learn.</span></footer>
-    </section>
-
-    <section class="view view-other" id="view-other" data-view-panel="other" aria-labelledby="other-title" hidden>
-      <div class="other-heading">
-        <button class="round-button back-button" type="button" data-view="home" aria-label="Kembali ke beranda">←</button>
-        <div>
-          <span class="pill"><span class="pill-star">✦</span> PETUALANGAN KELAS 1</span>
-          <h1 id="other-title">Pilih pelajaran</h1>
-          <p>Pilih materi yang mau dimainkan.</p>
+      <section class="lesson-selector" aria-labelledby="lesson-title">
+        <div class="lesson-heading"><span class="pill-star" aria-hidden="true">✦</span><h2 id="lesson-title">Pilih pelajaran</h2></div>
+        <div class="lesson-grid">
+          <button class="lesson-button lesson-tik" type="button" data-action="start-subject" data-subject="tik"><span aria-hidden="true">💻</span><strong>TIK</strong><small>27 soal</small></button>
+          <button class="lesson-button lesson-pancasila" type="button" data-action="start-subject" data-subject="pancasila"><span aria-hidden="true">🇮🇩</span><strong>Pendidikan<br>Pancasila</strong><small>11 soal</small></button>
+          <button class="lesson-button lesson-bahasa" type="button" data-action="start-subject" data-subject="bahasa"><span aria-hidden="true">📚</span><strong>Bahasa<br>Indonesia</strong><small>13 soal</small></button>
+          <button class="lesson-button lesson-matematika" type="button" data-action="start-subject" data-subject="matematika"><span aria-hidden="true">🔢</span><strong>Matematika</strong><small>8 soal</small></button>
+          <button class="lesson-button lesson-sbdp" type="button" data-action="start-subject" data-subject="sbdp"><span aria-hidden="true">🎨</span><strong>Seni Budaya<br>(SBDP)</strong><small>10 soal</small></button>
         </div>
-      </div>
-      <div class="other-subject-grid" aria-label="Pilihan pelajaran">
-        <button class="other-subject-card" type="button" data-action="select-subject" data-subject="pancasila"><span>🇮🇩</span><strong>Pendidikan Pancasila</strong><small>11 soal</small></button>
-        <button class="other-subject-card" type="button" data-action="select-subject" data-subject="bahasa"><span>📚</span><strong>Bahasa Indonesia</strong><small>13 soal</small></button>
-        <button class="other-subject-card" type="button" data-action="select-subject" data-subject="matematika"><span>🔢</span><strong>Matematika</strong><small>8 soal</small></button>
-        <button class="other-subject-card" type="button" data-action="select-subject" data-subject="sbdp"><span>🎨</span><strong>Seni Budaya (SBDP)</strong><small>10 soal</small></button>
-      </div>
-      <p id="other-subject-note" class="other-subject-note" aria-live="polite">Soal diringkas dari bahan STS/PTS kelas 1.</p>
+      </section>
+      <footer class="home-footer"><button type="button" class="text-button" data-action="credits">Tentang sumber soal</button><span>Explore. Discover. Learn.</span></footer>
     </section>
 
     <section class="view view-quiz" id="view-quiz" data-view-panel="quiz" aria-labelledby="question-text" hidden>
@@ -130,7 +107,7 @@
     <dialog id="credits-dialog" class="credits-dialog">
       <button class="dialog-close" type="button" data-action="close-credits" aria-label="Tutup">×</button>
       <p class="dialog-eyebrow">TENTANG SUMBER SOAL</p>
-      <h2>Latihan TIK PIXELAND</h2>
+      <h2>Latihan PIXELAND</h2>
       <p>Soal TIK diadaptasi dari repo pembelajaran sebelumnya. Pendidikan Pancasila, Bahasa Indonesia, Matematika, dan SBDP diringkas dari berkas STS/PTS kelas 1 yang disediakan.</p>
       <p class="source-credit">Penyusun sumber TIK: Albadru Muh Izul Khaq, S.Kom.<br>Developer sumber TIK: Belva Fahrozi, M.Kom.</p>
       <a href="https://github.com/belvahector-ship-it/belajar-informatika-sd1" target="_blank" rel="noreferrer">Lihat repo sumber ↗</a>

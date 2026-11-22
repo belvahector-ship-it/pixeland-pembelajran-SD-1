@@ -10,7 +10,7 @@ Buka `index.html` di browser modern. Tidak ada build atau package yang diperluka
 
 ## Pengalaman
 
-- Home visual petualangan dengan karakter dan gambar perangkat.
+- Home visual petualangan dengan lima tombol pelajaran: TIK, Pendidikan Pancasila, Bahasa Indonesia, Matematika, dan SBDP.
 - Backing track `back 1.flac`, `back2.flac`, dan `back3.flac` berputar berurutan. Halaman mencoba autoplay; browser yang memblokir audio bersuara memulainya saat sentuhan/klik pertama.
 - Audio tombol memakai `mixkit-select-click-1109.wav`; hasil di atas 80 memakai achievement bell dan nilai di bawah 80 memakai losing bleeps.
 - Tombol besar, animasi ringan, font besar, dan pilihan suara ON/OFF.

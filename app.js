@@ -5,7 +5,7 @@ const tikQuestions = source?.items || [];
 const otherQuestionBanks = window.PIXELAND_OTHER_SOURCES || {};
 let questions = tikQuestions;
 let currentSubject = 'tik';
-const views = ['home', 'other', 'quiz', 'result'];
+const views = ['home', 'quiz', 'result'];
 const state = { index: 0, correct: 0, answers: [], soundOn: true, backgroundIndex: 0 };
 const byId = (id) => document.getElementById(id);
 const ui = {
@@ -281,10 +281,8 @@ document.addEventListener('click', (event) => {
     return;
   }
   const action = control.dataset.action;
-  if (action === 'start') startPractice('tik');
+  if (action === 'start-subject') startPractice(control.dataset.subject);
   if (action === 'restart') startPractice(currentSubject);
-  if (action === 'open-other') go('other');
-  if (action === 'select-subject') startPractice(control.dataset.subject);
   if (action === 'exit') go('home');
   if (action === 'credits') byId('credits-dialog').showModal();
   if (action === 'close-credits') byId('credits-dialog').close();
