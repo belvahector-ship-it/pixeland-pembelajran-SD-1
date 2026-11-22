@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eff8ff">
+  <meta name="description" content="PIXELAND — latihan TIK kelas 1 dengan petualangan visual.">
+  <title>PIXELAND — Latihan TIK Kelas 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="assets/data/tik-questions.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <audio id="background-music" src="assets/sound/back%201.flac" autoplay preload="auto" playsinline></audio>
+  <a class="skip-link" href="#main">Ke konten</a>
+  <header class="topbar">
+    <a class="brand" href="#home" data-view="home" aria-label="PIXELAND, beranda">
+      <span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span>PIXELAND</span>
+    </a>
+    <div class="header-actions">
+      <span class="tagline">A World of Learning Adventures</span>
+      <button id="sound-toggle" class="round-button sound-toggle" type="button" aria-pressed="true" aria-label="Suara aktif">
+        <span aria-hidden="true" class="sound-glyph">♫</span><span class="sound-label">Suara ON</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="view view-home is-active" id="view-home" data-view-panel="home" aria-labelledby="home-title">
+      <div class="hero-panel">
+        <div class="hero-image" aria-hidden="true"></div>
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="hero-copy">
+          <span class="pill"><span class="pill-star">✦</span> PETUALANGAN TIK KELAS 1</span>
+          <h1 id="home-title">Yuk, kenali<br><span>dunia komputer!</span></h1>
+          <p>27 soal seru. Bisa dengar soalnya juga!</p>
+          <button class="big-button start-button" type="button" data-action="start">
+            Mulai latihan <span aria-hidden="true">→</span>
+          </button>
+          <div class="hero-mini"><span class="mini-dot"></span> Santai saja, coba satu per satu.</div>
+        </div>
+        <img class="hero-buddy" src="assets/images/pixel-guide.png" alt="Robot PIXELAND melambaikan tangan" width="520" height="475">
+        <div class="hero-sticker sticker-one" aria-hidden="true">⌨️</div>
+        <div class="hero-sticker sticker-two" aria-hidden="true">🖱️</div>
+      </div>
+      <div class="topic-strip" aria-label="Topik latihan">
+        <span class="topic-chip"><b>🖥️</b> Bagian komputer</span>
+        <span class="topic-chip"><b>⌨️</b> Keyboard</span>
+        <span class="topic-chip"><b>🖱️</b> Mouse</span>
+        <span class="topic-chip"><b>💚</b> Aman &amp; sehat</span>
+        <img src="assets/images/computer-friends.png" alt="Komputer, keyboard, mouse, dan speaker warna pastel" width="420" height="280">
+      </div>
+      <footer class="home-footer"><button type="button" class="text-button" data-action="credits">Tentang sumber soal</button><span>Explore. Discover. Learn.</span></footer>
+    </section>
+
+    <section class="view view-quiz" id="view-quiz" data-view-panel="quiz" aria-labelledby="question-text" hidden>
+      <div class="quiz-top">
+        <button class="round-button back-button" type="button" data-action="exit" aria-label="Kembali ke beranda">←</button>
+        <div class="quiz-progress-wrap">
+          <div class="quiz-progress-head"><span>LATIHAN TIK</span><strong id="question-counter">1 / 27</strong></div>
+          <div class="progress-track"><span id="progress-fill"></span></div>
+        </div>
+        <div class="streak-chip" aria-label="Bintang terkumpul"><span>★</span><strong id="star-count">0</strong></div>
+      </div>
+      <div class="quiz-layout">
+        <section class="question-card" aria-live="polite">
+          <div class="question-meta"><span id="topic-label" class="topic-label">BAGIAN KOMPUTER</span><span class="question-decoration" aria-hidden="true">✦</span></div>
+          <div class="question-content">
+            <img class="device-art" src="assets/images/computer-friends.png" alt="" aria-hidden="true" width="420" height="280">
+            <div class="question-main">
+              <h1 id="question-text">Pertanyaan latihan</h1>
+              <button id="speak-button" class="listen-button" type="button"><span aria-hidden="true">🔊</span> Dengarkan soal</button>
+            </div>
+          </div>
+          <div id="answer-area" class="answer-area"></div>
+          <div class="quiz-bottom">
+            <span id="feedback-text" class="feedback-text" aria-live="polite"></span>
+            <button id="next-button" class="big-button next-button" type="button" disabled>Berikutnya <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+        <aside class="buddy-card" aria-label="Penyemangat PIXELAND">
+          <div class="buddy-cloud" aria-hidden="true">Aku temani ya! <i>✦</i></div>
+          <img src="assets/images/pixel-guide.png" alt="Robot kecil PIXELAND" width="520" height="475">
+          <div class="buddy-caption"><span class="buddy-spark">✧</span><span id="buddy-message">Kamu pasti bisa!</span></div>
+          <div class="question-dots" id="question-dots" aria-label="Nomor soal"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="view view-result" id="view-result" data-view-panel="result" aria-labelledby="result-title" hidden>
+      <div class="result-card">
+        <div class="result-confetti" aria-hidden="true"><span>✦</span><span>●</span><span>✧</span><span>●</span><span>✦</span></div>
+        <img src="assets/images/pixel-guide.png" alt="Robot PIXELAND merayakan usahamu" width="520" height="475">
+        <p class="result-kicker">PETUALANGAN SELESAI</p>
+        <h1 id="result-title">Hebat! Kamu sudah mencoba.</h1>
+        <div class="result-score"><strong id="result-score">0</strong><span>/ 100</span><small id="result-detail">0 dari 23 pilihan ganda tepat</small></div>
+        <p id="result-message" class="result-message">Belajar sedikit demi sedikit itu hebat.</p>
+        <div class="result-actions"><button class="big-button" type="button" data-action="restart">Coba lagi <span aria-hidden="true">↻</span></button><button class="secondary-button" type="button" data-view="home">Beranda</button></div>
+      </div>
+    </section>
+
+    <dialog id="credits-dialog" class="credits-dialog">
+      <button class="dialog-close" type="button" data-action="close-credits" aria-label="Tutup">×</button>
+      <p class="dialog-eyebrow">TENTANG SUMBER SOAL</p>
+      <h2>Latihan TIK PIXELAND</h2>
+      <p>Subset latihan TIK diadaptasi dari bank soal yang tersedia di repo pembelajaran sebelumnya. Soal dan jawaban belum melalui review kurikulum PIXELAND.</p>
+      <p class="source-credit">Penyusun sumber: Albadru Muh Izul Khaq, S.Kom.<br>Developer sumber: Belva Fahrozi, M.Kom.</p>
+      <a href="https://github.com/belvahector-ship-it/belajar-informatika-sd1" target="_blank" rel="noreferrer">Lihat repo sumber ↗</a>
+      <p class="small-note">PIXELAND independen dan tidak menyatakan afiliasi atau endorsement SD Al Huda Semarang. Status izin penggunaan materi perlu dikonfirmasi.</p>
+    </dialog>
+  </main>
+  <footer class="site-footer"><span>PIXELAND</span><span>Latihan TIK • Kelas 1</span></footer>
+</body>
+</html>
+
+
