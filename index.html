@@ -58,6 +58,29 @@
       <footer class="home-footer"><button type="button" class="text-button" data-action="credits">Tentang sumber soal</button><span>Explore. Discover. Learn.</span></footer>
     </section>
 
+    <section class="view view-roadmap" id="view-roadmap" data-view-panel="roadmap" aria-labelledby="roadmap-title" hidden>
+      <div class="roadmap-header">
+        <button class="round-button back-button" type="button" data-action="exit" aria-label="Kembali ke pilihan pelajaran">←</button>
+        <div class="roadmap-heading-copy">
+          <span class="roadmap-kicker">PETUALANGAN KELAS 1</span>
+          <h1 id="roadmap-title"><span id="roadmap-subject">TIK</span> <small id="roadmap-count">27 soal</small></h1>
+        </div>
+      </div>
+      <div class="roadmap-map" aria-label="Peta perjalanan soal">
+        <img class="roadmap-background" src="assets/images/roadmap/roadmap-school-world.png" alt="Jalur petualangan melewati perpustakaan, taman bermain, jembatan, hingga gerbang sekolah" width="1672" height="945">
+        <svg class="roadmap-track" viewBox="0 0 1000 565" preserveAspectRatio="none" aria-hidden="true">
+          <path id="roadmap-route-path" d="M 42 502 C 112 486 165 455 248 433 C 295 421 322 392 294 365 C 267 339 218 336 203 319 C 190 302 236 298 304 294 C 389 288 455 287 515 270 C 573 253 596 228 651 216 C 712 203 775 216 810 196 C 838 180 810 156 769 147 C 798 128 846 117 920 121" />
+        </svg>
+        <div id="roadmap-checkpoints" class="roadmap-checkpoints" aria-hidden="true"></div>
+        <div id="roadmap-finish" class="roadmap-finish" aria-hidden="true">🏁</div>
+        <img id="roadmap-robot" class="roadmap-robot" src="assets/images/roadmap/robot-run.png" alt="" aria-hidden="true" width="120" height="120">
+      </div>
+      <div class="roadmap-controls">
+        <p id="roadmap-status" aria-live="polite">Robot siap berangkat! Ayo lewati semua titik.</p>
+        <button id="roadmap-start" class="big-button" type="button" data-action="begin-journey">Mulai Petualangan <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
     <section class="view view-quiz" id="view-quiz" data-view-panel="quiz" aria-labelledby="question-text" hidden>
       <div class="quiz-top">
         <button class="round-button back-button" type="button" data-action="exit" aria-label="Kembali ke beranda">←</button>
@@ -78,6 +101,13 @@
             </div>
           </div>
           <div id="answer-area" class="answer-area"></div>
+          <div id="retry-overlay" class="retry-overlay" role="status" aria-live="polite" hidden>
+            <div class="retry-card">
+              <img id="retry-robot" src="assets/images/roadmap/robot-fall.png" alt="Robot PIXELAND terpeleset ringan ke lubang kartun" width="260" height="260">
+              <strong id="retry-title">Ups! Coba lagi!</strong>
+              <span id="retry-hint">Pilih jawaban yang lain, ya.</span>
+            </div>
+          </div>
           <div class="quiz-bottom">
             <span id="feedback-text" class="feedback-text" aria-live="polite"></span>
             <button id="next-button" class="big-button next-button" type="button" disabled>Berikutnya <span aria-hidden="true">→</span></button>
