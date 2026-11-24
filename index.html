@@ -4,14 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eff8ff">
-  <meta name="description" content="PIXELAND — petualangan belajar kelas 1 dengan lima mata pelajaran seru.">
+  <meta name="app-version" content="1.0.1">
+  <meta name="description" content="PIXELAND — petualangan belajar kelas 1 dengan enam mata pelajaran seru.">
   <title>PIXELAND — Petualangan Belajar Kelas 1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Fredoka:wght@400;500;600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="assets/data/tik-questions.js" defer></script>
   <script src="assets/data/other-questions.js" defer></script>
+  <script src="assets/data/arabic-questions.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -38,7 +40,7 @@
         <div class="hero-copy">
           <span class="pill"><span class="pill-star">✦</span> PETUALANGAN SEKOLAH DASAR KELAS 1</span>
           <h1 id="home-title">Yuk, bermain<br><span>sambil belajar!</span></h1>
-          <p>5 mata pelajaran seru dan asyik</p>
+          <p>6 mata pelajaran seru dan asyik</p>
           <div class="hero-mini"><span class="mini-dot"></span> Santai saja, coba satu per satu.</div>
         </div>
         <img class="hero-buddy" src="assets/images/pixel-guide.png" alt="Robot PIXELAND melambaikan tangan" width="520" height="475">
@@ -53,6 +55,7 @@
           <button class="lesson-button lesson-bahasa" type="button" data-action="start-subject" data-subject="bahasa"><span aria-hidden="true">📚</span><strong>Bahasa<br>Indonesia</strong><small>13 soal</small></button>
           <button class="lesson-button lesson-matematika" type="button" data-action="start-subject" data-subject="matematika"><span aria-hidden="true">🔢</span><strong>Matematika</strong><small>8 soal</small></button>
           <button class="lesson-button lesson-sbdp" type="button" data-action="start-subject" data-subject="sbdp"><span aria-hidden="true">🎨</span><strong>Seni Budaya<br>(SBDP)</strong><small>10 soal</small></button>
+          <button class="lesson-button lesson-arabic" type="button" data-action="start-subject" data-subject="arabic"><span aria-hidden="true">🕌</span><strong>Bahasa Arab</strong><small>28 soal</small></button>
         </div>
       </section>
       <footer class="home-footer"><button type="button" class="text-button" data-action="credits">Tentang sumber soal</button><span>Explore. Discover. Learn.</span></footer>
@@ -138,7 +141,7 @@
       <button class="dialog-close" type="button" data-action="close-credits" aria-label="Tutup">×</button>
       <p class="dialog-eyebrow">TENTANG SUMBER SOAL</p>
       <h2>Latihan PIXELAND</h2>
-      <p>Soal TIK diadaptasi dari repo pembelajaran sebelumnya. Pendidikan Pancasila, Bahasa Indonesia, Matematika, dan SBDP diringkas dari berkas STS/PTS kelas 1 yang disediakan.</p>
+      <p>Soal Bahasa Arab diambil dari kuis_interaktif_bahasa_arab_kelas_1.html. Soal TIK diadaptasi dari repo pembelajaran sebelumnya. Pendidikan Pancasila, Bahasa Indonesia, Matematika, dan SBDP diringkas dari berkas STS/PTS kelas 1 yang disediakan.</p>
       <p class="source-credit">Penyusun sumber TIK: Albadru Muh Izul Khaq, S.Kom.<br>Developer sumber TIK: Belva Fahrozi, M.Kom.</p>
       <a href="https://github.com/belvahector-ship-it/belajar-informatika-sd1" target="_blank" rel="noreferrer">Lihat repo sumber ↗</a>
       <p class="small-note">Soal yang bergantung pada gambar yang tidak tersedia tidak dimasukkan. Materi perlu ditinjau pendamping dan PIXELAND tidak menyatakan afiliasi atau endorsement sekolah mana pun.</p>

@@ -10,7 +10,7 @@ Buka `index.html` di browser modern. Tidak ada build atau package yang diperluka
 
 ## Pengalaman
 
-- Home visual petualangan dengan lima tombol pelajaran: TIK, Pendidikan Pancasila, Bahasa Indonesia, Matematika, dan SBDP.
+- Home visual petualangan dengan enam tombol pelajaran: TIK, Pendidikan Pancasila, Bahasa Indonesia, Matematika, SBDP, dan Bahasa Arab.
 - Setelah memilih pelajaran, roadmap memperlihatkan seluruh titik soal. Robot melaju ke titik berikutnya setelah jawaban diselesaikan.
 - Jawaban salah memunculkan animasi robot jatuh dan kembali; petunjuk tampil setelah dua kali mencoba.
 - Backing track `back 1.flac`, `back2.flac`, dan `back3.flac` berputar berurutan. Halaman mencoba autoplay; browser yang memblokir audio bersuara memulainya saat sentuhan/klik pertama.
@@ -23,6 +23,8 @@ Buka `index.html` di browser modern. Tidak ada build atau package yang diperluka
 ## Sumber soal
 
 Data TIK ada di `assets/data/tik-questions.js`, dari [repo sumber lama](https://github.com/belvahector-ship-it/belajar-informatika-sd1/blob/main/index.html). Empat mapel lainnya ada di `assets/data/other-questions.js`, diringkas dari berkas dalam `Kumpulan_Soal_STS_PTS_Kelas_1_Semester_1`. Credit dan batasan materi ditampilkan di dialog “Tentang sumber soal”. Soal belum divalidasi sebagai kurikulum nasional dan status izin penggunaan tetap perlu dikonfirmasi. PIXELAND tidak menyiratkan afiliasi/endorsement sekolah mana pun.
+
+Bank Bahasa Arab (28 soal) diambil dari `kuis_interaktif_bahasa_arab_kelas_1.html`; teks Arab, arti, pilihan, jawaban, dan penjelasan dipertahankan. Versi patch saat ini: `1.0.1`.
 
 ## Aset visual
 

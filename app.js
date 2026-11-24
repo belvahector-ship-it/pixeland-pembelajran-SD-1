@@ -3,6 +3,7 @@
 const source = window.PIXELAND_TIK_SOURCE;
 const tikQuestions = source?.items || [];
 const otherQuestionBanks = window.PIXELAND_OTHER_SOURCES || {};
+const arabicQuestionBank = window.PIXELAND_ARABIC_SOURCE;
 let questions = tikQuestions;
 let currentSubject = 'tik';
 const views = ['home', 'roadmap', 'quiz', 'result'];
@@ -114,7 +115,7 @@ function speakCurrentQuestion() {
     return;
   }
   const question = questions[state.index];
-  let text = `Soal ${state.index + 1}. ${question.q}`;
+  let text = `Soal ${state.index + 1}. ${question.speak || question.q}`;
   if (question.type === 'mc') {
     text += `. Pilihan A. ${question.options[0]}. Pilihan B. ${question.options[1]}. Pilihan C. ${question.options[2]}.`;
   } else {
@@ -205,7 +206,20 @@ function renderQuestion() {
   ui.progress.style.width = `${((state.index + 1) / questions.length) * 100}%`;
   ui.stars.textContent = String(state.correct);
   ui.topic.textContent = question.topic.toLocaleUpperCase('id-ID');
-  ui.question.textContent = question.q;
+  ui.question.replaceChildren();
+  if (question.arabic) {
+    const arabic = document.createElement('span');
+    arabic.className = 'question-arabic';
+    arabic.lang = 'ar';
+    arabic.dir = 'rtl';
+    arabic.textContent = question.arabic;
+    const translation = document.createElement('span');
+    translation.className = 'question-translation';
+    translation.textContent = question.q;
+    ui.question.append(arabic, translation);
+  } else {
+    ui.question.textContent = question.q;
+  }
   ui.feedback.textContent = '';
   ui.feedback.classList.remove('is-wrong');
   ui.answers.className = 'answer-area';
@@ -229,7 +243,13 @@ function renderChoices(question) {
     button.className = 'answer-option';
     button.dataset.choice = String(index);
     button.innerHTML = `<span class="option-letter">${labels[index]}</span><span class="option-text"></span>`;
-    button.querySelector('.option-text').textContent = option;
+    const optionText = button.querySelector('.option-text');
+    optionText.textContent = option;
+    if (question.optionArabic?.[index]) {
+      optionText.lang = 'ar';
+      optionText.dir = 'rtl';
+      optionText.classList.add('is-arabic');
+    }
     button.addEventListener('click', () => chooseAnswer(index, question));
     ui.answers.append(button);
   });
@@ -348,7 +368,7 @@ function finish() {
 function startPractice(subject = 'tik') {
   const bank = subject === 'tik'
     ? { title: 'TIK', items: tikQuestions }
-    : otherQuestionBanks[subject];
+    : subject === 'arabic' ? arabicQuestionBank : otherQuestionBanks[subject];
   if (!bank?.items?.length) {
     ui.buddy.textContent = 'Bank soal belum dapat dibuka.';
     return;
