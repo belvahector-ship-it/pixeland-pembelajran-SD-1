@@ -87,3 +87,25 @@
 @media(max-width:650px){.roadmap-robot{width:clamp(60px,18vw,92px)}.roadmap-robot.is-celebrating{width:clamp(68px,20vw,100px)}.roadmap-controls .secondary-button{width:100%}}
 /* Jalan robot dan fade perayaan adalah inti permainan: tetap tampil saat "reduce motion" aktif. */
 @media(prefers-reduced-motion:reduce){.roadmap-robot{transition-duration:2s!important}.correct-overlay{animation-duration:.5s!important}}
+
+/* Popup nama anak (1.0.4) */
+html.is-locked{overflow:hidden}
+.welcome-dialog{margin:auto;width:min(600px,calc(100vw - 28px));max-height:calc(100vh - 28px);max-height:calc(100dvh - 28px);overflow:auto;padding:26px 24px 34px;border:4px solid #bfe2f6;border-radius:34px;background:linear-gradient(180deg,#e3f5ff 0%,#fff 60%);color:var(--ink);text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.5)}
+.welcome-dialog::backdrop{background:rgba(3,8,16,.74);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.welcome-form{display:flex;flex-direction:column;align-items:center;gap:10px}
+.welcome-pixels{display:flex;gap:8px}
+.welcome-pixels i{width:14px;height:14px;border-radius:3px;background:var(--sky);animation:welcome-blink 1.2s steps(2,jump-none) infinite}
+.welcome-pixels i:nth-child(2){background:var(--sun);animation-delay:.15s}
+.welcome-pixels i:nth-child(3){background:var(--leaf);animation-delay:.3s}
+.welcome-pixels i:nth-child(4){background:var(--coral);animation-delay:.45s}
+.welcome-pixels i:nth-child(5){background:var(--lilac);animation-delay:.6s}
+.welcome-robot{width:min(64%,280px);height:auto;max-height:32vh;object-fit:contain;filter:drop-shadow(0 12px 10px rgba(33,78,108,.22));animation:device-bob 3s ease-in-out infinite}
+.welcome-form h2{margin:0;font:600 clamp(28px,7vw,40px)/1.1 'Fredoka',sans-serif;color:var(--sky-deep)}
+.welcome-form label{font:600 21px 'Fredoka',sans-serif}
+.welcome-input{width:min(100%,420px);min-height:62px;padding:10px 18px;border:3px solid #bfe2f6;border-radius:20px;background:#fff;color:var(--ink);text-align:center;font:600 26px 'Fredoka',sans-serif}
+.welcome-input:focus{outline:4px solid rgba(53,169,239,.3);border-color:var(--sky)}
+.welcome-error{min-height:1.3em;margin:0;color:#c8453b;font-size:14px;font-weight:900}
+.welcome-sound{width:min(100%,420px);cursor:pointer}
+.welcome-sound[aria-pressed="true"]{border-color:#9bd9bc;background:#eafaf1;color:#26744f}
+.welcome-start{width:min(100%,420px);margin-top:6px;justify-content:center}
+@keyframes welcome-blink{from{opacity:1}to{opacity:.45}}

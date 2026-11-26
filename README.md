@@ -11,6 +11,8 @@ Buka `index.html` di browser modern. Tidak ada build atau package yang diperluka
 ## Pengalaman
 
 - Home visual petualangan dengan tujuh tombol latihan: TIK, Latihan Tambahan TIK, Pendidikan Pancasila, Bahasa Indonesia, Matematika, SBDP, dan Bahasa Arab.
+- Saat sesi pertama dibuka, popup meminta nama anak dan pilihan suara ON/OFF. Nama hanya disimpan di `sessionStorage` tab tersebut dan tidak dikirim ke mana pun.
+- Urutan soal dan pilihan jawaban diacak setiap percobaan baru; pilihan ganda tetap lebih dulu, lalu isian. Percobaan yang belum selesai mempertahankan urutannya.
 - Setelah memilih pelajaran, roadmap memperlihatkan seluruh titik soal. Jawaban pilihan ganda yang benar memunculkan perayaan robot (sekitar 3 detik), lalu robot berjalan ke titik berikutnya dan menunggu tombol **Lanjut**.
 - Progres tersimpan otomatis selama sesi tab browser aktif (`sessionStorage`): bertahan saat halaman dimuat ulang, hilang saat tab ditutup. Tombol **Ulang dari awal** menghapus progres pelajaran tersebut.
 - Jawaban salah memunculkan animasi robot jatuh dan kembali; petunjuk tampil setelah dua kali mencoba.
@@ -25,7 +27,7 @@ Buka `index.html` di browser modern. Tidak ada build atau package yang diperluka
 
 Paket TIK (`assets/data/tik-questions.js`, 25 pilihan ganda + 5 isian) mencakup benda di sekitar, hidup bersih, komunikasi, dan pengenalan komputer. Latihan Tambahan TIK (`assets/data/tik-extra-questions.js`, 25 pilihan ganda + 5 isian) berisi latihan komputer. Sebagian besar butir berasal dari [repo sumber lama](https://github.com/belvahector-ship-it/belajar-informatika-sd1/blob/main/index.html); butir ber-`origin` adalah soal baru atau adaptasi berkas lokal. Empat mapel lainnya ada di `assets/data/other-questions.js`, diringkas dari berkas dalam `Kumpulan_Soal_STS_PTS_Kelas_1_Semester_1`. Credit dan batasan materi ditampilkan di dialog “Tentang sumber soal”. Soal belum divalidasi sebagai kurikulum nasional dan status izin penggunaan tetap perlu dikonfirmasi. PIXELAND tidak menyiratkan afiliasi/endorsement sekolah mana pun.
 
-Bank Bahasa Arab (28 soal) diambil dari `kuis_interaktif_bahasa_arab_kelas_1.html`; teks Arab, arti, pilihan, jawaban, dan penjelasan dipertahankan. Versi patch saat ini: `1.0.3`.
+Bank Bahasa Arab (28 soal) diambil dari `kuis_interaktif_bahasa_arab_kelas_1.html`; teks Arab, arti, pilihan, jawaban, dan penjelasan dipertahankan. Versi patch saat ini: `1.0.4`.
 
 ## Aset visual
 

@@ -11,6 +11,8 @@ const views = ['home', 'roadmap', 'quiz', 'result'];
 const CELEBRATE_MS = 2800;
 const ROBOT_WALK_MS = 2000;
 const PROGRESS_KEY = 'pixeland-progress-v1';
+const PLAYER_KEY = 'pixeland-player-v1';
+const player = { name: '' };
 const state = { index: 0, correct: 0, answers: [], wrongAttempts: [], mapPosition: 0, mapTimer: null, answerTimer: null, soundOn: true, backgroundIndex: 0 };
 const byId = (id) => document.getElementById(id);
 const ui = {
@@ -24,7 +26,10 @@ const ui = {
   mapStart: byId('roadmap-start'), mapRestart: byId('roadmap-restart'), correctOverlay: byId('correct-overlay'),
   retryOverlay: byId('retry-overlay'), retryRobot: byId('retry-robot'),
   retryTitle: byId('retry-title'), retryHint: byId('retry-hint'),
-  resultScore: byId('result-score'), resultDetail: byId('result-detail'), resultMessage: byId('result-message')
+  resultScore: byId('result-score'), resultDetail: byId('result-detail'), resultMessage: byId('result-message'),
+  resultTitle: byId('result-title'), correctMessage: byId('correct-message'), greeting: byId('home-greeting'),
+  welcome: byId('welcome-dialog'), welcomeForm: byId('welcome-form'), welcomeName: byId('welcome-name'),
+  welcomeError: byId('welcome-error'), welcomeSound: byId('welcome-sound')
 };
 const backgroundTracks = [
   'assets/sound/back%201.flac',
@@ -55,7 +60,7 @@ const bankSignature = (items) => items.map((item) => item.q).join('|');
 function saveProgress(done = false) {
   const store = readStore();
   store.subjects[currentSubject] = {
-    signature: bankSignature(questions), done,
+    signature: bankSignature(getBank(currentSubject).items), deck: state.deck, done,
     index: state.index, mapPosition: state.mapPosition, correct: state.correct,
     answers: state.answers, wrongAttempts: state.wrongAttempts
   };
@@ -73,8 +78,54 @@ function loadProgress(subject, items) {
   const valid = saved && saved.signature === bankSignature(items)
     && Number.isInteger(saved.index) && saved.index >= 0 && saved.index < items.length
     && Number.isInteger(saved.mapPosition) && saved.mapPosition >= 0 && saved.mapPosition <= items.length
-    && Array.isArray(saved.answers) && Array.isArray(saved.wrongAttempts);
+    && Array.isArray(saved.answers) && Array.isArray(saved.wrongAttempts)
+    && isValidDeck(saved.deck, items);
   return valid ? saved : null;
+}
+
+// Fisher-Yates: hasilkan salinan teracak.
+function shuffle(list) {
+  const result = [...list];
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+// Deck = urutan soal dan urutan pilihan. Pilihan ganda tetap di depan, isian di belakang.
+function makeDeck(items) {
+  const indexes = items.map((_, index) => index);
+  const choices = indexes.filter((index) => items[index].type === 'mc');
+  const others = indexes.filter((index) => items[index].type !== 'mc');
+  return [...shuffle(choices), ...shuffle(others)].map((index) => ({
+    item: index,
+    order: items[index].options ? shuffle(items[index].options.map((_, option) => option)) : null
+  }));
+}
+
+function isValidDeck(deck, items) {
+  if (!Array.isArray(deck) || deck.length !== items.length) return false;
+  if (new Set(deck.map((card) => card?.item)).size !== items.length) return false;
+  return deck.every((card) => {
+    const source = items[card?.item];
+    if (!source) return false;
+    if (!source.options) return true;
+    return Array.isArray(card.order) && card.order.length === source.options.length
+      && new Set(card.order).size === card.order.length
+      && card.order.every((option) => Number.isInteger(option) && option >= 0 && option < source.options.length);
+  });
+}
+
+// Bank asli tidak diubah; kunci jawaban mengikuti posisi pilihan yang baru.
+function applyDeck(items, deck) {
+  return deck.map(({ item, order }) => {
+    const source = items[item];
+    if (!order) return source;
+    const question = { ...source, options: order.map((option) => source.options[option]), a: order.indexOf(source.a) };
+    if (source.optionArabic) question.optionArabic = order.map((option) => source.optionArabic[option]);
+    return question;
+  });
 }
 
 function clearProgress(subject) {
@@ -132,10 +183,15 @@ function startBackground() {
   backgroundStarting = true;
   backgroundMusic.play().then(() => {
     backgroundStarting = false;
+    if (!state.soundOn) {
+      backgroundMusic.pause();
+      return;
+    }
     ui.sound.querySelector('.sound-label').textContent = 'Suara ON';
     ui.sound.setAttribute('aria-label', 'Suara aktif');
   }).catch(() => {
     backgroundStarting = false;
+    if (!state.soundOn) return;
     ui.sound.querySelector('.sound-label').textContent = 'Sentuh untuk musik';
     ui.sound.setAttribute('aria-label', 'Sentuh halaman atau tombol untuk memulai musik');
   });
@@ -159,6 +215,55 @@ backgroundMusic.addEventListener('error', () => {
 // Try audible autoplay on load; if the browser blocks it, the first touch/key starts it.
 document.addEventListener('pointerdown', startBackground, { capture: true, passive: true });
 document.addEventListener('keydown', startBackground, { capture: true });
+
+function loadPlayer() {
+  try {
+    const saved = JSON.parse(window.sessionStorage.getItem(PLAYER_KEY));
+    if (!saved) return;
+    player.name = typeof saved.name === 'string' ? saved.name : '';
+    state.soundOn = saved.soundOn !== false;
+  } catch {}
+}
+
+// Nama hanya disimpan di tab ini (sessionStorage) dan tidak dikirim ke mana pun.
+function savePlayer() {
+  try {
+    window.sessionStorage.setItem(PLAYER_KEY, JSON.stringify({ name: player.name, soundOn: state.soundOn }));
+  } catch {}
+}
+
+const greet = (text) => (player.name ? `${text}, ${player.name}!` : `${text}!`);
+
+function renderPlayerName() {
+  ui.greeting.textContent = player.name ? `Halo, ${player.name}! Yuk, coba satu per satu.` : 'Santai saja, coba satu per satu.';
+}
+
+function renderSound() {
+  const label = state.soundOn ? 'Suara ON' : 'Suara OFF';
+  ui.sound.setAttribute('aria-pressed', String(state.soundOn));
+  ui.sound.setAttribute('aria-label', state.soundOn ? 'Suara aktif' : 'Suara mati');
+  ui.sound.querySelector('.sound-label').textContent = label;
+  ui.welcomeSound.setAttribute('aria-pressed', String(state.soundOn));
+  ui.welcomeSound.textContent = `${state.soundOn ? '🔊' : '🔇'} ${label}`;
+}
+
+function setSound(on) {
+  state.soundOn = on;
+  renderSound();
+  savePlayer();
+  if (on) {
+    startBackground();
+    return;
+  }
+  backgroundMusic.autoplay = false;
+  pauseBackground();
+  stopVoice();
+}
+
+function openWelcome() {
+  document.documentElement.classList.add('is-locked');
+  ui.welcome.showModal();
+}
 
 function stopVoice() {
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -293,7 +398,7 @@ function renderQuestion() {
   ui.next.disabled = true;
   ui.next.hidden = false;
   ui.next.innerHTML = state.index === questions.length - 1 ? 'Selesai <span aria-hidden="true">✦</span>' : 'Berikutnya <span aria-hidden="true">→</span>';
-  ui.buddy.textContent = state.index % 4 === 3 ? 'Wah, makin hebat!' : 'Kamu pasti bisa!';
+  ui.buddy.textContent = greet(state.index % 4 === 3 ? 'Wah, makin hebat' : 'Kamu pasti bisa');
   if (question.type === 'mc') renderChoices(question);
   else renderFillIn(question);
   renderDots();
@@ -340,6 +445,7 @@ function chooseAnswer(choice, question) {
   ui.next.disabled = false;
   ui.next.textContent = state.index === questions.length - 1 ? 'Ke gerbang! →' : 'Laju ke titik berikutnya →';
   saveProgress();
+  ui.correctMessage.textContent = `${greet('Hebat')} Robot siap melaju!`;
   ui.correctOverlay.hidden = false;
   const completedQuestion = state.index;
   state.answerTimer = window.setTimeout(() => {
@@ -430,6 +536,7 @@ function finish({ silent = false } = {}) {
   const mcTotal = questions.filter((item) => item.type === 'mc').length;
   const fillDone = state.answers.filter((answer) => answer?.type === 'fill').length;
   const score = mcTotal ? Math.round((state.correct / mcTotal) * 100) : 0;
+  ui.resultTitle.textContent = `${greet('Hebat')} Kamu sudah mencoba.`;
   ui.resultScore.textContent = String(score);
   ui.resultDetail.textContent = `${state.correct} dari ${mcTotal} pilihan ganda tepat`;
   ui.resultMessage.textContent = `${fillDone} soal isian sudah kamu coba. Ajak pendamping melihat contoh jawaban.`;
@@ -449,7 +556,8 @@ function getBank(subject) {
 function openSubject(subject, saved) {
   const bank = getBank(subject);
   currentSubject = subject;
-  questions = bank.items;
+  state.deck = saved?.deck ?? makeDeck(bank.items);
+  questions = applyDeck(bank.items, state.deck);
   ui.quizSubject.textContent = bank.title.replace('Pendidikan ', '').replace(' (SBDP)', '').toLocaleUpperCase('id-ID');
   byId('view-quiz').classList.toggle('is-subject-other', !subject.startsWith('tik'));
   state.index = saved?.index ?? 0;
@@ -483,7 +591,10 @@ function startPractice(subject = 'tik') {
     return;
   }
   const saved = loadProgress(subject, bank.items);
-  openSubject(subject, saved && !saved.done ? saved : null);
+  // Lanjutkan hanya bila sudah ada jawaban; selain itu acak ulang.
+  const started = saved && !saved.done
+    && (saved.mapPosition > 0 || saved.answers.some(Boolean) || saved.wrongAttempts.some(Boolean));
+  openSubject(subject, started ? saved : null);
   showSavedRoadmap();
 }
 
@@ -580,15 +691,28 @@ document.addEventListener('click', (event) => {
 
 ui.next.addEventListener('click', nextQuestion);
 ui.speak.addEventListener('click', speakCurrentQuestion);
-ui.sound.addEventListener('click', () => {
-  state.soundOn = !state.soundOn;
-  ui.sound.setAttribute('aria-pressed', String(state.soundOn));
-  ui.sound.setAttribute('aria-label', state.soundOn ? 'Suara aktif' : 'Suara mati');
-  ui.sound.querySelector('.sound-label').textContent = state.soundOn ? 'Suara ON' : 'Suara OFF';
-  if (!state.soundOn) {
-    pauseBackground();
-    stopVoice();
-  } else startBackground();
+ui.sound.addEventListener('click', () => setSound(!state.soundOn));
+ui.welcomeSound.addEventListener('click', () => setSound(!state.soundOn));
+ui.welcomeName.addEventListener('input', () => { ui.welcomeError.textContent = ''; });
+ui.welcomeForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const name = ui.welcomeName.value.replace(/\s+/g, ' ').trim();
+  if (!name) {
+    ui.welcomeError.textContent = 'Tulis namamu dulu, ya!';
+    ui.welcomeName.focus();
+    return;
+  }
+  player.name = name;
+  savePlayer();
+  renderPlayerName();
+  ui.welcome.close();
+  startBackground();
+});
+// Popup tidak boleh ditutup (misalnya dengan Esc) sebelum nama diisi.
+ui.welcome.addEventListener('cancel', (event) => event.preventDefault());
+ui.welcome.addEventListener('close', () => {
+  if (!player.name) openWelcome();
+  else document.documentElement.classList.remove('is-locked');
 });
 
 document.addEventListener('visibilitychange', () => {
@@ -600,6 +724,14 @@ window.addEventListener('hashchange', () => {
   if (views.includes(name)) go(name);
 });
 
+loadPlayer();
+renderSound();
+renderPlayerName();
+if (!state.soundOn) {
+  backgroundMusic.autoplay = false;
+  pauseBackground();
+}
 restoreSession();
+if (!player.name) openWelcome();
 startBackground();
 

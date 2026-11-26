@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eff8ff">
-  <meta name="app-version" content="1.0.3">
+  <meta name="app-version" content="1.0.4">
   <meta name="description" content="PIXELAND — petualangan belajar kelas 1 dengan enam mata pelajaran seru.">
   <title>PIXELAND — Petualangan Belajar Kelas 1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,7 +42,7 @@
           <span class="pill"><span class="pill-star">✦</span> PETUALANGAN SEKOLAH DASAR KELAS 1</span>
           <h1 id="home-title">Yuk, bermain<br><span>sambil belajar!</span></h1>
           <p>6 mata pelajaran seru dan asyik</p>
-          <div class="hero-mini"><span class="mini-dot"></span> Santai saja, coba satu per satu.</div>
+          <div class="hero-mini"><span class="mini-dot"></span> <span id="home-greeting">Santai saja, coba satu per satu.</span></div>
         </div>
         <img class="hero-buddy" src="assets/images/pixel-guide.png" alt="Robot PIXELAND melambaikan tangan" width="520" height="475">
         <div class="hero-sticker sticker-one" aria-hidden="true">⌨️</div>
@@ -145,9 +145,22 @@
         <div class="result-confetti" aria-hidden="true"><span>✦</span><span>●</span><span>✧</span><span>●</span><span>✦</span></div>
         <img src="assets/images/roadmap/robot-celebrate.png" alt="Robot PIXELAND ikut merayakan" width="260" height="260">
         <strong>BENAR!</strong>
-        <span>Hebat! Robot siap melaju!</span>
+        <span id="correct-message">Hebat! Robot siap melaju!</span>
       </div>
     </div>
+
+    <dialog id="welcome-dialog" class="welcome-dialog" aria-labelledby="welcome-title">
+      <form id="welcome-form" class="welcome-form" novalidate>
+        <span class="welcome-pixels" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        <img class="welcome-robot" src="assets/images/pixel-guide.png" alt="Robot PIXELAND menyapa" width="520" height="475">
+        <h2 id="welcome-title">Halo, Petualang!</h2>
+        <label for="welcome-name">Siapa namamu?</label>
+        <input id="welcome-name" class="welcome-input" type="text" maxlength="20" autocomplete="off" placeholder="Tulis namamu…" aria-describedby="welcome-error">
+        <p id="welcome-error" class="welcome-error" role="alert"></p>
+        <button id="welcome-sound" class="secondary-button welcome-sound" type="button" aria-pressed="true">🔊 Suara ON</button>
+        <button class="big-button welcome-start" type="submit">Mulai Bermain <span aria-hidden="true">→</span></button>
+      </form>
+    </dialog>
 
     <dialog id="credits-dialog" class="credits-dialog">
       <button class="dialog-close" type="button" data-action="close-credits" aria-label="Tutup">×</button>
