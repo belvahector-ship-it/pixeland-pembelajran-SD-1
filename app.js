@@ -2,11 +2,15 @@
 
 const source = window.PIXELAND_TIK_SOURCE;
 const tikQuestions = source?.items || [];
+const tikExtraBank = window.PIXELAND_TIK_EXTRA_SOURCE;
 const otherQuestionBanks = window.PIXELAND_OTHER_SOURCES || {};
 const arabicQuestionBank = window.PIXELAND_ARABIC_SOURCE;
 let questions = tikQuestions;
 let currentSubject = 'tik';
 const views = ['home', 'roadmap', 'quiz', 'result'];
+const CELEBRATE_MS = 2800;
+const ROBOT_WALK_MS = 2000;
+const PROGRESS_KEY = 'pixeland-progress-v1';
 const state = { index: 0, correct: 0, answers: [], wrongAttempts: [], mapPosition: 0, mapTimer: null, answerTimer: null, soundOn: true, backgroundIndex: 0 };
 const byId = (id) => document.getElementById(id);
 const ui = {
@@ -17,7 +21,8 @@ const ui = {
   quizSubject: byId('quiz-subject-label'),
   mapSubject: byId('roadmap-subject'), mapCount: byId('roadmap-count'), mapStatus: byId('roadmap-status'),
   mapCheckpoints: byId('roadmap-checkpoints'), mapRobot: byId('roadmap-robot'), mapFinish: byId('roadmap-finish'),
-  mapStart: byId('roadmap-start'), retryOverlay: byId('retry-overlay'), retryRobot: byId('retry-robot'),
+  mapStart: byId('roadmap-start'), mapRestart: byId('roadmap-restart'), correctOverlay: byId('correct-overlay'),
+  retryOverlay: byId('retry-overlay'), retryRobot: byId('retry-robot'),
   retryTitle: byId('retry-title'), retryHint: byId('retry-hint'),
   resultScore: byId('result-score'), resultDetail: byId('result-detail'), resultMessage: byId('result-message')
 };
@@ -30,6 +35,54 @@ const backgroundMusic = byId('background-music');
 backgroundMusic.volume = .16;
 let backgroundStarting = false;
 
+// Progres disimpan di sessionStorage: bertahan saat halaman dimuat ulang, hilang saat tab ditutup.
+function readStore() {
+  try {
+    const store = JSON.parse(window.sessionStorage.getItem(PROGRESS_KEY));
+    if (store?.subjects) return store;
+  } catch {}
+  return { subjects: {} };
+}
+
+function writeStore(store) {
+  try {
+    window.sessionStorage.setItem(PROGRESS_KEY, JSON.stringify(store));
+  } catch {}
+}
+
+const bankSignature = (items) => items.map((item) => item.q).join('|');
+
+function saveProgress(done = false) {
+  const store = readStore();
+  store.subjects[currentSubject] = {
+    signature: bankSignature(questions), done,
+    index: state.index, mapPosition: state.mapPosition, correct: state.correct,
+    answers: state.answers, wrongAttempts: state.wrongAttempts
+  };
+  writeStore(store);
+}
+
+function saveView(view) {
+  const store = readStore();
+  store.active = { subject: currentSubject, view };
+  writeStore(store);
+}
+
+function loadProgress(subject, items) {
+  const saved = readStore().subjects[subject];
+  const valid = saved && saved.signature === bankSignature(items)
+    && Number.isInteger(saved.index) && saved.index >= 0 && saved.index < items.length
+    && Number.isInteger(saved.mapPosition) && saved.mapPosition >= 0 && saved.mapPosition <= items.length
+    && Array.isArray(saved.answers) && Array.isArray(saved.wrongAttempts);
+  return valid ? saved : null;
+}
+
+function clearProgress(subject) {
+  const store = readStore();
+  delete store.subjects[subject];
+  writeStore(store);
+}
+
 function go(name) {
   if (!views.includes(name)) return;
   if (name !== 'quiz' && state.answerTimer) {
@@ -40,7 +93,9 @@ function go(name) {
     window.clearTimeout(state.mapTimer);
     state.mapTimer = null;
   }
+  if (name !== 'quiz') ui.correctOverlay.hidden = true;
   stopVoice();
+  saveView(name);
   document.querySelectorAll('[data-view-panel]').forEach((panel) => {
     const active = panel.dataset.viewPanel === name;
     panel.hidden = !active;
@@ -162,15 +217,22 @@ function setMapRobotPosition(fromPoint, toPoint, animate, final = false) {
   ui.mapRobot.classList.toggle('is-celebrating', final);
   if (!animate) return;
 
+  // Paksa browser menghitung posisi awal sebelum transisi ke posisi tujuan.
   void ui.mapRobot.offsetWidth;
-  requestAnimationFrame(() => {
-    ui.mapRobot.style.transition = 'left 1.15s cubic-bezier(.2,.72,.3,1), top 1.15s cubic-bezier(.2,.72,.3,1)';
-    ui.mapRobot.style.left = `${(toPoint.x / 1000) * 100}%`;
-    ui.mapRobot.style.top = `${(toPoint.y / 565) * 100}%`;
-  });
+  ui.mapRobot.style.transition = `left ${ROBOT_WALK_MS}ms ease-in-out, top ${ROBOT_WALK_MS}ms ease-in-out`;
+  ui.mapRobot.style.left = `${(toPoint.x / 1000) * 100}%`;
+  ui.mapRobot.style.top = `${(toPoint.y / 565) * 100}%`;
 }
 
-function renderRoadmap({ position = state.mapPosition, from = position, animate = false, final = false, showStart = false, status = '' } = {}) {
+function showMapButton(label) {
+  ui.mapStart.innerHTML = `${label} <span aria-hidden="true">→</span>`;
+  ui.mapStart.hidden = false;
+  ui.mapStart.disabled = false;
+  // Di layar pendek tombol berada di bawah peta; gulir secukupnya agar terlihat.
+  ui.mapStart.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function renderRoadmap({ position = state.mapPosition, from = position, animate = false, final = false, status = '' } = {}) {
   const path = byId('roadmap-route-path');
   const routeLength = path.getTotalLength();
   const finishPoint = path.getPointAtLength(routeLength);
@@ -181,8 +243,9 @@ function renderRoadmap({ position = state.mapPosition, from = position, animate 
   ui.mapSubject.textContent = ui.quizSubject.textContent;
   ui.mapCount.textContent = `${questions.length} soal • ${questions.length} titik`;
   ui.mapStatus.textContent = status;
-  ui.mapStart.hidden = !showStart;
-  ui.mapStart.disabled = !showStart;
+  ui.mapStart.hidden = true;
+  ui.mapStart.disabled = true;
+  ui.mapRestart.hidden = true;
   ui.mapFinish.style.left = `${(finishPoint.x / 1000) * 100}%`;
   ui.mapFinish.style.top = `${(finishPoint.y / 565) * 100}%`;
   ui.mapCheckpoints.replaceChildren();
@@ -226,6 +289,7 @@ function renderQuestion() {
   ui.answers.innerHTML = '';
   ui.retryOverlay.hidden = true;
   ui.retryOverlay.classList.remove('is-falling', 'is-peeking');
+  ui.correctOverlay.hidden = true;
   ui.next.disabled = true;
   ui.next.hidden = false;
   ui.next.innerHTML = state.index === questions.length - 1 ? 'Selesai <span aria-hidden="true">✦</span>' : 'Berikutnya <span aria-hidden="true">→</span>';
@@ -275,12 +339,14 @@ function chooseAnswer(choice, question) {
   ui.stars.textContent = String(state.correct);
   ui.next.disabled = false;
   ui.next.textContent = state.index === questions.length - 1 ? 'Ke gerbang! →' : 'Laju ke titik berikutnya →';
+  saveProgress();
+  ui.correctOverlay.hidden = false;
   const completedQuestion = state.index;
   state.answerTimer = window.setTimeout(() => {
     if (state.index !== completedQuestion) return;
     state.answerTimer = null;
     nextQuestion();
-  }, 1100);
+  }, CELEBRATE_MS);
 }
 
 function showRetry(choice, question) {
@@ -288,6 +354,7 @@ function showRetry(choice, question) {
   const wrongButton = buttons[choice];
   const attempt = (state.wrongAttempts[state.index] || 0) + 1;
   state.wrongAttempts[state.index] = attempt;
+  saveProgress();
   buttons.forEach((button) => { button.disabled = true; });
   wrongButton?.classList.add('wrong');
 
@@ -344,6 +411,7 @@ function renderFillIn(question) {
     ui.next.disabled = !hasText;
     if (hasText) state.answers[state.index] = { correct: null, type: 'fill', value: input.value.trim() };
     else delete state.answers[state.index];
+    saveProgress();
   });
   sampleButton.addEventListener('click', () => {
     sample.classList.toggle('is-visible');
@@ -351,47 +419,85 @@ function renderFillIn(question) {
   });
   form.append(input, sampleButton);
   ui.answers.append(form, sample);
+  const savedValue = state.answers[state.index]?.value;
+  if (savedValue) {
+    input.value = savedValue;
+    ui.next.disabled = false;
+  }
 }
 
-function finish() {
+function finish({ silent = false } = {}) {
   const mcTotal = questions.filter((item) => item.type === 'mc').length;
   const fillDone = state.answers.filter((answer) => answer?.type === 'fill').length;
   const score = mcTotal ? Math.round((state.correct / mcTotal) * 100) : 0;
   ui.resultScore.textContent = String(score);
   ui.resultDetail.textContent = `${state.correct} dari ${mcTotal} pilihan ganda tepat`;
   ui.resultMessage.textContent = `${fillDone} soal isian sudah kamu coba. Ajak pendamping melihat contoh jawaban.`;
-  if (score > 80) soundEffect('achievement');
-  else if (score < 80) soundEffect('losing');
+  if (!silent && score > 80) soundEffect('achievement');
+  else if (!silent && score < 80) soundEffect('losing');
   go('result');
+  saveProgress(true);
+}
+
+function getBank(subject) {
+  if (subject === 'tik') return { title: 'TIK', items: tikQuestions };
+  if (subject === 'tik-extra') return tikExtraBank;
+  if (subject === 'arabic') return arabicQuestionBank;
+  return otherQuestionBanks[subject];
+}
+
+function openSubject(subject, saved) {
+  const bank = getBank(subject);
+  currentSubject = subject;
+  questions = bank.items;
+  ui.quizSubject.textContent = bank.title.replace('Pendidikan ', '').replace(' (SBDP)', '').toLocaleUpperCase('id-ID');
+  byId('view-quiz').classList.toggle('is-subject-other', !subject.startsWith('tik'));
+  state.index = saved?.index ?? 0;
+  state.correct = saved?.correct ?? 0;
+  state.answers = saved ? [...saved.answers] : [];
+  state.wrongAttempts = saved ? saved.wrongAttempts.map((count) => count || 0) : Array(questions.length).fill(0);
+  state.mapPosition = saved?.mapPosition ?? 0;
+  // Jawaban sudah benar tetapi halaman ditutup saat perayaan: robot dianggap sudah maju.
+  const answer = state.answers[state.index];
+  if (answer?.type === 'mc' && answer.correct && state.mapPosition === state.index) state.mapPosition += 1;
+}
+
+function showSavedRoadmap() {
+  const position = state.mapPosition;
+  const final = position >= questions.length;
+  const started = position > 0;
+  let status = 'Robot siap berangkat! Ayo lewati semua titik.';
+  if (final) status = 'Progresmu tersimpan. Robot sudah di gerbang!';
+  else if (started) status = `Progresmu tersimpan. Robot ada di titik ${position + 1}.`;
+  go('roadmap');
+  renderRoadmap({ position, from: position, final, status });
+  showMapButton(final ? 'Lihat hasil' : started ? 'Lanjut' : 'Mulai Petualangan');
+  ui.mapRestart.hidden = !started;
+  saveProgress();
 }
 
 function startPractice(subject = 'tik') {
-  const bank = subject === 'tik'
-    ? { title: 'TIK', items: tikQuestions }
-    : subject === 'arabic' ? arabicQuestionBank : otherQuestionBanks[subject];
+  const bank = getBank(subject);
   if (!bank?.items?.length) {
     ui.buddy.textContent = 'Bank soal belum dapat dibuka.';
     return;
   }
-  currentSubject = subject;
-  questions = bank.items;
-  ui.quizSubject.textContent = bank.title.replace('Pendidikan ', '').replace(' (SBDP)', '').toLocaleUpperCase('id-ID');
-  byId('view-quiz').classList.toggle('is-subject-other', subject !== 'tik');
-  state.index = 0;
-  state.correct = 0;
-  state.answers = [];
-  state.wrongAttempts = Array(questions.length).fill(0);
-  state.mapPosition = 0;
-  renderRoadmap({ position: 0, from: 0, showStart: true, status: 'Robot siap berangkat! Ayo lewati semua titik.' });
-  go('roadmap');
+  const saved = loadProgress(subject, bank.items);
+  openSubject(subject, saved && !saved.done ? saved : null);
+  showSavedRoadmap();
 }
 
 function beginJourney() {
   ui.mapStart.disabled = true;
   ui.mapStart.hidden = true;
-  state.index = 0;
+  if (state.mapPosition >= questions.length) {
+    finish();
+    return;
+  }
+  state.index = state.mapPosition;
   renderQuestion();
   go('quiz');
+  saveProgress();
 }
 
 function nextQuestion() {
@@ -401,30 +507,46 @@ function nextQuestion() {
     state.answerTimer = null;
   }
   ui.next.disabled = true;
-  stopVoice();
   const from = state.mapPosition;
   const target = state.index + 1;
   const final = target >= questions.length;
   state.mapPosition = target;
-  ui.mapStart.hidden = true;
+  // Peta ditampilkan dulu agar perpindahan robot benar-benar teranimasi.
+  go('roadmap');
+  saveProgress();
   renderRoadmap({
     position: target,
     from,
     animate: true,
     final,
-    status: final ? 'Robot menuju gerbang sekolah!' : `Robot melaju ke titik ${target + 1}!`
+    status: final ? 'Robot menuju gerbang sekolah!' : `Robot berjalan ke titik ${target + 1}…`
   });
-  go('roadmap');
   state.mapTimer = window.setTimeout(() => {
     state.mapTimer = null;
-    if (final) {
-      finish();
-      return;
-    }
-    state.index = target;
+    ui.mapRobot.classList.remove('is-running');
+    ui.mapStatus.textContent = final ? 'Robot sampai di gerbang sekolah!' : `Robot sampai di titik ${target + 1}. Tekan Lanjut, ya!`;
+    showMapButton(final ? 'Lihat hasil' : 'Lanjut');
+  }, ROBOT_WALK_MS);
+}
+
+function restoreSession() {
+  const { active } = readStore();
+  if (!active || active.view === 'home') return;
+  const bank = getBank(active.subject);
+  if (!bank?.items?.length) return;
+  const saved = loadProgress(active.subject, bank.items);
+  if (!saved) return;
+  if (saved.done) {
+    if (active.view !== 'result') return;
+    openSubject(active.subject, saved);
+    finish({ silent: true });
+    return;
+  }
+  openSubject(active.subject, saved);
+  if (active.view === 'quiz' && state.mapPosition === state.index) {
     renderQuestion();
     go('quiz');
-  }, 1400);
+  } else showSavedRoadmap();
 }
 
 document.addEventListener('click', (event) => {
@@ -447,7 +569,10 @@ document.addEventListener('click', (event) => {
   const action = control.dataset.action;
   if (action === 'start-subject') startPractice(control.dataset.subject);
   if (action === 'begin-journey') beginJourney();
-  if (action === 'restart') startPractice(currentSubject);
+  if (action === 'restart') {
+    clearProgress(currentSubject);
+    startPractice(currentSubject);
+  }
   if (action === 'exit') go('home');
   if (action === 'credits') byId('credits-dialog').showModal();
   if (action === 'close-credits') byId('credits-dialog').close();
@@ -475,5 +600,6 @@ window.addEventListener('hashchange', () => {
   if (views.includes(name)) go(name);
 });
 
+restoreSession();
 startBackground();
 

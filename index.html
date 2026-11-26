@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eff8ff">
-  <meta name="app-version" content="1.0.1">
+  <meta name="app-version" content="1.0.3">
   <meta name="description" content="PIXELAND — petualangan belajar kelas 1 dengan enam mata pelajaran seru.">
   <title>PIXELAND — Petualangan Belajar Kelas 1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Fredoka:wght@400;500;600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="assets/data/tik-questions.js" defer></script>
+  <script src="assets/data/tik-extra-questions.js" defer></script>
   <script src="assets/data/other-questions.js" defer></script>
   <script src="assets/data/arabic-questions.js" defer></script>
   <script src="app.js" defer></script>
@@ -50,7 +51,8 @@
       <section class="lesson-selector" aria-labelledby="lesson-title">
         <div class="lesson-heading"><span class="pill-star" aria-hidden="true">✦</span><h2 id="lesson-title">Pilih pelajaran</h2></div>
         <div class="lesson-grid">
-          <button class="lesson-button lesson-tik" type="button" data-action="start-subject" data-subject="tik"><span aria-hidden="true">💻</span><strong>TIK</strong><small>27 soal</small></button>
+          <button class="lesson-button lesson-tik" type="button" data-action="start-subject" data-subject="tik"><span aria-hidden="true">💻</span><strong>TIK</strong><small>30 soal</small></button>
+          <button class="lesson-button lesson-tik" type="button" data-action="start-subject" data-subject="tik-extra"><span aria-hidden="true">🖱️</span><strong>Latihan<br>Tambahan TIK</strong><small>30 soal</small></button>
           <button class="lesson-button lesson-pancasila" type="button" data-action="start-subject" data-subject="pancasila"><span aria-hidden="true">🇮🇩</span><strong>Pendidikan<br>Pancasila</strong><small>11 soal</small></button>
           <button class="lesson-button lesson-bahasa" type="button" data-action="start-subject" data-subject="bahasa"><span aria-hidden="true">📚</span><strong>Bahasa<br>Indonesia</strong><small>13 soal</small></button>
           <button class="lesson-button lesson-matematika" type="button" data-action="start-subject" data-subject="matematika"><span aria-hidden="true">🔢</span><strong>Matematika</strong><small>8 soal</small></button>
@@ -66,7 +68,7 @@
         <button class="round-button back-button" type="button" data-action="exit" aria-label="Kembali ke pilihan pelajaran">←</button>
         <div class="roadmap-heading-copy">
           <span class="roadmap-kicker">PETUALANGAN KELAS 1</span>
-          <h1 id="roadmap-title"><span id="roadmap-subject">TIK</span> <small id="roadmap-count">27 soal</small></h1>
+          <h1 id="roadmap-title"><span id="roadmap-subject">TIK</span> <small id="roadmap-count">30 soal</small></h1>
         </div>
       </div>
       <div class="roadmap-map" aria-label="Peta perjalanan soal">
@@ -81,6 +83,7 @@
       <div class="roadmap-controls">
         <p id="roadmap-status" aria-live="polite">Robot siap berangkat! Ayo lewati semua titik.</p>
         <button id="roadmap-start" class="big-button" type="button" data-action="begin-journey">Mulai Petualangan <span aria-hidden="true">→</span></button>
+        <button id="roadmap-restart" class="secondary-button" type="button" data-action="restart" hidden>Ulang dari awal <span aria-hidden="true">↻</span></button>
       </div>
     </section>
 
@@ -88,7 +91,7 @@
       <div class="quiz-top">
         <button class="round-button back-button" type="button" data-action="exit" aria-label="Kembali ke beranda">←</button>
         <div class="quiz-progress-wrap">
-          <div class="quiz-progress-head"><span id="quiz-subject-label">LATIHAN TIK</span><strong id="question-counter">1 / 27</strong></div>
+          <div class="quiz-progress-head"><span id="quiz-subject-label">LATIHAN TIK</span><strong id="question-counter">1 / 30</strong></div>
           <div class="progress-track"><span id="progress-fill"></span></div>
         </div>
         <div class="streak-chip" aria-label="Bintang terkumpul"><span>★</span><strong id="star-count">0</strong></div>
@@ -131,17 +134,26 @@
         <img src="assets/images/pixel-guide.png" alt="Robot PIXELAND merayakan usahamu" width="520" height="475">
         <p class="result-kicker">PETUALANGAN SELESAI</p>
         <h1 id="result-title">Hebat! Kamu sudah mencoba.</h1>
-        <div class="result-score"><strong id="result-score">0</strong><span>/ 100</span><small id="result-detail">0 dari 23 pilihan ganda tepat</small></div>
+        <div class="result-score"><strong id="result-score">0</strong><span>/ 100</span><small id="result-detail">0 dari 25 pilihan ganda tepat</small></div>
         <p id="result-message" class="result-message">Belajar sedikit demi sedikit itu hebat.</p>
         <div class="result-actions"><button class="big-button" type="button" data-action="restart">Coba lagi <span aria-hidden="true">↻</span></button><button class="secondary-button" type="button" data-view="home">Beranda</button></div>
       </div>
     </section>
 
+    <div id="correct-overlay" class="correct-overlay" role="status" hidden>
+      <div class="correct-card">
+        <div class="result-confetti" aria-hidden="true"><span>✦</span><span>●</span><span>✧</span><span>●</span><span>✦</span></div>
+        <img src="assets/images/roadmap/robot-celebrate.png" alt="Robot PIXELAND ikut merayakan" width="260" height="260">
+        <strong>BENAR!</strong>
+        <span>Hebat! Robot siap melaju!</span>
+      </div>
+    </div>
+
     <dialog id="credits-dialog" class="credits-dialog">
       <button class="dialog-close" type="button" data-action="close-credits" aria-label="Tutup">×</button>
       <p class="dialog-eyebrow">TENTANG SUMBER SOAL</p>
       <h2>Latihan PIXELAND</h2>
-      <p>Soal Bahasa Arab diambil dari kuis_interaktif_bahasa_arab_kelas_1.html. Soal TIK diadaptasi dari repo pembelajaran sebelumnya. Pendidikan Pancasila, Bahasa Indonesia, Matematika, dan SBDP diringkas dari berkas STS/PTS kelas 1 yang disediakan.</p>
+      <p>Soal Bahasa Arab diambil dari kuis_interaktif_bahasa_arab_kelas_1.html. Soal TIK sebagian besar diadaptasi dari repo pembelajaran sebelumnya, ditambah soal baru dan adaptasi berkas lokal yang bukan karya penyusun repo tersebut. Pendidikan Pancasila, Bahasa Indonesia, Matematika, dan SBDP diringkas dari berkas STS/PTS kelas 1 yang disediakan.</p>
       <p class="source-credit">Penyusun sumber TIK: Albadru Muh Izul Khaq, S.Kom.<br>Developer sumber TIK: Belva Fahrozi, M.Kom.</p>
       <a href="https://github.com/belvahector-ship-it/belajar-informatika-sd1" target="_blank" rel="noreferrer">Lihat repo sumber ↗</a>
       <p class="small-note">Soal yang bergantung pada gambar yang tidak tersedia tidak dimasukkan. Materi perlu ditinjau pendamping dan PIXELAND tidak menyatakan afiliasi atau endorsement sekolah mana pun.</p>
